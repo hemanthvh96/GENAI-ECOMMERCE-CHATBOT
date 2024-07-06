@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chatbot</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+      integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
+      crossorigin="anonymous"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  </head>
+
+  <body class="h-full">
+    <div class="container mx-auto h-full flex justify-center items-center">
+      <div class="w-full max-w-lg">
+        <div class="bg-white shadow-lg rounded-lg">
+          <div class="p-4 bg-gray-800 text-white flex items-center">
+            <img
+              src="https://static.vecteezy.com/system/resources/previews/016/017/018/non_2x/ecommerce-icon-free-png.png"
+              class="rounded-full h-12 w-12 mr-4"
+              alt="User"
+            />
+            <div>
+              <span class="block text-xl">E-Commerce Chatbot</span>
+              <p>Ask me anything!</p>
+            </div>
+          </div>
+          <div id="messageFormeight" class="p-4 overflow-y-auto h-96"></div>
+          <div class="p-4 bg-gray-100">
+            <form id="messageArea" class="flex">
+              <input
+                type="text"
+                id="text"
+                name="msg"
+                placeholder="Type your message..."
+                autocomplete="off"
+                class="flex-1 p-2 border rounded-l-lg focus:outline-none"
+                required
+              />
+              <button
+                type="submit"
+                id="send"
+                class="p-2 bg-blue-500 text-white rounded-r-lg hover:bg-blue-600 focus:outline-none"
+              >
+                <i class="fas fa-location-arrow"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        document
+          .getElementById("messageArea")
+          .addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const date = new Date();
+            const hour = String(date.getHours()).padStart(2, "0");
+            const minute = String(date.getMinutes()).padStart(2, "0");
+            const str_time = hour + ":" + minute;
+            const rawText = document.getElementById("text").value;
+
+            const userHtml = `
+                    <div class="flex justify-end mb-4">
+                        <div class="bg-blue-500 text-white p-2 rounded-lg">
+                            ${rawText}
+                            <span class="block text-xs mt-1">${str_time}</span>
+                        </div>
+                        <img src="https://i.ibb.co/d5b84Xw/Untitled-design.png" class="rounded-full h-8 w-8 ml-2" alt="User">
+                    </div>
+                `;
+
+            document.getElementById("text").value = "";
+            document
+              .getElementById("messageFormeight")
+              .insertAdjacentHTML("beforeend", userHtml);
+
+            fetch("/get", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ msg: rawText }),
+            })
+              .then((response) => response.text())
+              .then((data) => {
+                const parsedData = marked.parse(data);
+                const botHtml = `
+                        <div class="flex justify-start mb-4">
+                            <img src="https://static.vecteezy.com/system/resources/previews/016/017/018/non_2x/ecommerce-icon-free-png.png" class="rounded-full h-8 w-8 mr-2" alt="Bot">
+                            <div class="bg-gray-300 p-2 rounded-lg">
+                                ${parsedData}
+                                <span class="block text-xs mt-1">${str_time}</span>
+                            </div>
+                        </div>
+                    `;
+                document
+                  .getElementById("messageFormeight")
+                  .insertAdjacentHTML("beforeend", botHtml);
+              });
+          });
+      });
+    </script>
+  </body>
+</html>

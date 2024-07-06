@@ -1,0 +1,12 @@
+Metadata-Version: 2.1
+Name: Ecommercebot
+Version: 0.0.1
+Author: Hemanth
+Author-email: hemanthvhs@gmail.com
+Requires-Dist: langchain-google-genai
+Requires-Dist: langchain
+Requires-Dist: langchain-astradb
+Requires-Dist: datasets
+Requires-Dist: pypdf
+Requires-Dist: python-dotenv
+Requires-Dist: flask
